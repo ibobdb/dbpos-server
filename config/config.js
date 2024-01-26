@@ -12,7 +12,8 @@ module.exports = {
         require: true,
         rejectUnauthorized: false // Nonaktifkan penolakan koneksi jika sertifikat SSL tidak valid
       }
-    }
+    },
+    dialectModule: require('pg')
   },
   production: {
     username: process.env.PRODUCTION_DB_USER,
@@ -26,7 +27,8 @@ module.exports = {
         require: true,
         rejectUnauthorized: false // Nonaktifkan penolakan koneksi jika sertifikat SSL tidak valid
       }
-    }
+    },
+    dialectModule: require('pg')
   },
   // ...
 };

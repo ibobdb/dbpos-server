@@ -6,10 +6,10 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 // Middleware untuk mengurai data JSON dan formulir URL-encoded
 require('dotenv').config();
-app.use((req, res, next) => {
-  res.setHeader('Content-Security-Policy', "default-src 'self'; connect-src 'self' http://127.0.0.1:8080;");
-  next();
-});
+// app.use((req, res, next) => {
+//   res.setHeader('Content-Security-Policy', "default-src 'self'; connect-src 'self' http://127.0.0.1:8080;");
+//   next();
+// });
 const PORT = process.env.SERVER_PORT;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

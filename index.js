@@ -14,6 +14,9 @@ const PORT = process.env.SERVER_PORT;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
+app.get('/', (req, res) => {
+  res.send('Server Running')
+})
 app.get('/api/v1', (req, res) => {
   res.send('Server Running')
 })

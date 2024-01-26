@@ -21,7 +21,7 @@
     "mysql2": "^3.6.5",
     "node-thermal-printer": "^4.4.1",
     "nodemon": "^3.0.3",
-    "pg": "^8.11.3",
-    "sequelize": "^6.35.1"
+    "sequelize": "^6.35.1",
+    "pg": "^8.11.3"
   }
 }

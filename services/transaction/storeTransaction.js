@@ -112,7 +112,8 @@ const store_transaction = async (product_list, transaction_data) => {
     tax: transaction_data.tax,
     discount: transaction_data.discount,
     sub_total: 0,
-    total: 0
+    total: 0,
+    user_id: transaction_data.user_id
   }
   try {
     const create_product_out = await store_product_out(product_list, id);

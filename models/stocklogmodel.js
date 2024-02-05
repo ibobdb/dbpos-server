@@ -19,7 +19,8 @@ module.exports = (sequelize, DataTypes) => {
     event: DataTypes.STRING,
     desc: DataTypes.STRING,
     batch_code: DataTypes.STRING,
-    changes: DataTypes.STRING
+    changes: DataTypes.STRING,
+    user_id: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'stockLogModel',

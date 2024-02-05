@@ -140,7 +140,9 @@ module.exports = {
   },
   adjust_batch_stock: async (req, res) => {
     const batch_code = req.params.batch_code;
+    const product_id = req.params.barocde;
     const new_stock = req.body.new_stock;
+    const user_id = req.body.user_id;
     try {
       const getBarcode = await batchmodel.findOne({
         where: {
@@ -148,9 +150,8 @@ module.exports = {
         }
       });
       if (getBarcode) {
-
-
-        StockLog(getBarcode.product_barcode, 'update', new_stock, 'UPDATE BATCH', batch_code);
+        StockLog(getBarcode.product_barcode, 'update', new_stock, 'UPDATE BATCH', batch_code, user_id);
+        res.json('Batch Update')
       }
       res.json(responseFormatter.error('batch tidak ditemukan'))
 

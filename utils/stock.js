@@ -1,13 +1,14 @@
 const { productModel, stockLogModel, batchmodel } = require('../models');
 const { Op } = require("sequelize");
-const createStockLog = async (product_id, event, qty, desc, batch_code) => {
+const createStockLog = async (product_id, event, qty, desc, batch_code, user_id) => {
   try {
     const logID = await stockLogModel.create({
       product_id: product_id,
       qty: qty,
       batch_code: batch_code,
       event: event,
-      desc: desc
+      desc: desc,
+      user_id: user_id
     });
     if (logID) {
       updateBatchStock(product_id, batch_code, qty, event, logID.id);

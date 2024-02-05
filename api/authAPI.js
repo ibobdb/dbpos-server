@@ -2,6 +2,8 @@ const responseFormatter = require('../formatter/responseFormatter');
 const { usermodel } = require('../models');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const { Sequelize } = require('sequelize');
+
 module.exports = {
   login: async (req, res) => {
     const { password, username } = req.body;
@@ -40,5 +42,5 @@ module.exports = {
     } catch (error) {
       throw error
     }
-  }
+  },
 }

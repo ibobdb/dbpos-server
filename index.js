@@ -18,7 +18,9 @@ app.get('/', (req, res) => {
   res.send('Server Running')
 })
 app.get('/api/v1', (req, res) => {
-  res.send('Server Running')
+  res.status(200).json({
+    status: 200
+  })
 })
 // Middleware
 function authenticateToken(req, res, next) {

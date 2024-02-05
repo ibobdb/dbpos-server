@@ -45,7 +45,8 @@ module.exports = (sequelize, DataTypes) => {
     tax: DataTypes.INTEGER,
     discount: DataTypes.INTEGER,
     sub_total: DataTypes.INTEGER,
-    total: DataTypes.INTEGER
+    total: DataTypes.INTEGER,
+    user_id: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'transactionmodel',

@@ -65,34 +65,38 @@ module.exports = {
         // Sinkronkan Total STOK
         await sync_stock(data.product_barcode);
       }
-      res.json(responseFormatter.success(response));
+      return res.json(responseFormatter.success(response));
     } catch (error) {
       throw error
     }
   },
   getById: async (req, res) => {
     const batch_code = req.params.batch_code;
+    const barcode = req.params.barcode;
     try {
       const response = await batchmodel.findOne({
         where: {
-          batch_code: batch_code
+          batch_code: batch_code,
+          product_barcode: barcode
         }
       });
       if (!response) {
-        res.json(responseFormatter.success('Batch Tidak ditemukan'))
+        return res.json(responseFormatter.success('Batch Tidak ditemukan'))
       }
-      res.json(responseFormatter.success(response));
+      return res.json(responseFormatter.success(response));
     } catch (error) {
 
     }
   },
   update: async (req, res) => {
     const batch_code = req.params.batch_code;
+    const barcode = req.params.barcode;
     const data = req.body;
     try {
       const response = await batch_code.update(data, {
         where: {
-          batch_code: batch_code
+          batch_code: batch_code,
+          product_barcode: barcode
         }
       })
     } catch (error) {
@@ -100,13 +104,15 @@ module.exports = {
   },
   delete: async (req, res) => {
     const batch_code = req.params.batch_code;
+    const barcode = req.params.barcode;
     try {
       const response = await batchmodel.destroy({
         where: {
-          batch_code: batch_code
+          batch_code: batch_code,
+          product_barcode: barcode
         }
       })
-      res.json(responseFormatter.success(response))
+      return res.json(responseFormatter.success(response))
     } catch (error) {
     }
   },
@@ -140,13 +146,14 @@ module.exports = {
   },
   adjust_batch_stock: async (req, res) => {
     const batch_code = req.params.batch_code;
-    const product_id = req.params.barocde;
+    const barcode = req.params.barcode;
     const new_stock = req.body.new_stock;
     const user_id = req.body.user_id;
     try {
       const getBarcode = await batchmodel.findOne({
         where: {
-          batch_code: batch_code
+          batch_code: batch_code,
+          product_barcode: barcode
         }
       });
       if (getBarcode) {

@@ -66,6 +66,7 @@ app.get('/api/v1/category', category.getAll)
 app.post('/api/v1/category', category.addCategory)
 app.delete('/api/v1/category/:id', category.delete)
 app.put('/api/v1/category/:id', category.update)
+app.get('/api/v1/category/:id', category.getCategoryById)
 // transaksi
 const transaction = require('./api/transactionAPI')
 app.post('/api/v1/transaction', transaction.create);
@@ -86,16 +87,17 @@ app.put('/api/v1/discount/change_status/:id', discount.set_off_discount);
 const batch = require('./api/batchAPI');
 batch.check_bath_expire();
 app.get('/api/v1/batch', batch.get);
-app.get('/api/v1/batch/:batch_code', batch.getById);
+app.get('/api/v1/batch/:batch_code/:barcode', batch.getById);
 app.post('/api/v1/batch', batch.create);
 app.put('/api/v1/batch', batch.update);
-app.delete('/api/v1/batch/:batch_code', batch.delete);
-app.put('/api/v1/batch/:batch_code', batch.adjust_batch_stock);
+app.delete('/api/v1/batch/:batch_code/:barcode', batch.delete);
+app.put('/api/v1/batch/:batch_code/:barcode', batch.adjust_batch_stock);
 app.get('/api/v1/batch/export/excel', batch.export_to_excel);
 
 // User
 const user = require('./api/userAPI');
 app.get('/api/v1/users', user.get);
+app.get('/api/v1/users/:id', user.getUserByID);
 app.post('/api/v1/users', user.create);
 app.delete('/api/v1/users/:id/delete', user.delete);
 app.put('/api/v1/users/:id/update', user.update);

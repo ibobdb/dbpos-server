@@ -83,5 +83,18 @@ module.exports = {
     } catch (error) {
       res.json(responseFormatter.error(error))
     }
+  },
+  getCategoryById: async (req, res) => {
+    const id = req.params.id;
+    try {
+      const response = await categoryModel.findOne({
+        where: {
+          id: id
+        }
+      });
+      res.json(responseFormatter.success(response))
+    } catch (error) {
+
+    }
   }
 }

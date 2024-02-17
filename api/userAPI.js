@@ -14,13 +14,16 @@ module.exports = {
         }
       })
       if (checkUsername) {
-        res.json(responseFormatter.error('Username telah terdafatar'));
+        return res.json(responseFormatter.error('Username telah terdafatar'));
       }
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(data.password, saltRounds);
       data.password = hashedPassword;
       const createData = await usermodel.create(data);
-      res.json(responseFormatter.success(createData));
+      if (!createData) {
+        return res.status(400).json(responseFormatter.error('bad request'))
+      }
+      return res.json(responseFormatter.success(createData));
     } catch (error) {
       throw error
     }
@@ -79,6 +82,19 @@ module.exports = {
     } catch (err) {
       res.json(responseFormatter.error(err))
     }
+  },
+  getUserByID: async (req, res) => {
+    const userId = req.params.id;
+    try {
+      await usermodel.findOne({
+        where: {
+          id: userId
+        }
+      }).then((response) => {
+        res.json(responseFormatter.success(response))
+      })
+    } catch (error) {
+      throw error
+    }
   }
-
 }

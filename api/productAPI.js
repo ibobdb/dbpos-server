@@ -15,17 +15,12 @@ module.exports = {
             [Op.or]: [
               {
                 barcode: {
-                  [Op.like]: `%${search}%`
+                  [Op.iLike]: `%${search}%`
                 }
               },
               {
                 product_name: {
-                  [Op.like]: `${search}%`
-                }
-              },
-              {
-                product_name: {
-                  [Op.like]: `%${search}%`
+                  [Op.iLike]: `%${search}%`
                 }
               }
             ]

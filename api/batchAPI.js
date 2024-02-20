@@ -14,17 +14,17 @@ module.exports = {
           [Op.or]: [
             {
               batch_code: {
-                [Op.like]: `%${search}%`
+                [Op.iLike]: `%${search}%`
               }
             },
             {
               product_barcode: {
-                [Op.like]: `%${search}%`
+                [Op.iLike]: `%${search}%`
               }
             },
             {
               '$product.product_name$': {
-                [Op.like]: `%${search}%`
+                [Op.iLike]: `%${search}%`
               }
             }
           ]

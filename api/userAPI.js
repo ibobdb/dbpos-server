@@ -39,16 +39,16 @@ module.exports = {
             [Op.or]: [
               {
                 fullname: {
-                  [Op.like]: `${search}%`
+                  [Op.iLike]: `${search}%`
                 }
               }, {
                 roles: {
-                  [Op.like]: `${search}%`
+                  [Op.iLike]: `${search}%`
                 }
               },
               {
                 username: {
-                  [Op.like]: `${search}%`
+                  [Op.iLike]: `${search}%`
                 }
               },
             ]

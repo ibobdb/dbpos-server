@@ -31,7 +31,7 @@ module.exports = {
           [Op.or]: [
             {
               id: {
-                [Op.like]: `%${search}%`
+                [Op.iLike]: `%${search}%`
               }
             },
           ]

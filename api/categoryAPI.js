@@ -13,7 +13,7 @@ module.exports = {
             [Op.or]: [
               {
                 name: {
-                  [Op.like]: `${search}%`
+                  [Op.iLike]: `${search}%`
                 }
               },
             ]

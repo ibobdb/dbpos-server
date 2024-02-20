@@ -95,27 +95,7 @@ module.exports = {
             [Op.or]: [
               {
                 discount_name: {
-                  [Op.like]: `%${search}%`
-                }
-              },
-              {
-                discount_value: {
-                  [Op.like]: `%${search}%`
-                }
-              },
-              {
-                discount_start_on: {
-                  [Op.like]: `%${search}%`
-                }
-              },
-              {
-                discount_end_on: {
-                  [Op.like]: `%${search}%`
-                }
-              },
-              {
-                discount_type: {
-                  [Op.like]: `%${search}%`
+                  [Op.iLike]: `%${search}%`
                 }
               },
             ]
@@ -127,6 +107,7 @@ module.exports = {
         where: (search ? whereClause : {}),
         limit: parseInt(limit),
         offset: offset,
+        distinct: true,
         include: [
           {
             model: productModel,

@@ -75,8 +75,8 @@ app.get('/api/v1/transaction', transaction.get);
 app.get('/api/v1/transaction/export/excel', transaction.export_to_excel)
 // Dashboard
 const dashboard = require('./api/dashboardAPI');
-app.get('/api/v1/dashboard/non_filter_data', dashboard.non_filter_data);
-app.get('/api/v1/dashboard/filter_data', dashboard.filter_data);
+app.get('/api/v1/dashboard', dashboard.getDashboard);
+app.get('/api/v1/dashboard/stat', dashboard.getStat);
 // DISKON
 const discount = require('./api/discountAPI');
 discount.check_discount_expire();

@@ -1,5 +1,5 @@
 const responseFormatter = require('../formatter/responseFormatter');
-const { productModel, transactionmodel, productoutmodel } = require('../models')
+const { productModel, transactionmodel, productoutmodel, categoryModel } = require('../models')
 const { Op, Sequelize } = require("sequelize");
 module.exports = {
   non_filter_data: async (req, res) => {
@@ -66,5 +66,101 @@ module.exports = {
     } catch (error) {
       throw error
     }
+  },
+  getDashboard: async (req, res) => {
+
+    const start = new Date(req.query.start);
+    const end = new Date(req.query.end);
+    end.setDate(end.getDate() + 1);
+    const whereClause = {
+      where: {
+        createdAt: {
+          [Op.between]: [start, end]
+        }
+      }
+    }
+    const transaction = await transactionmodel.findAndCountAll(whereClause);
+    const sales = await transactionmodel.sum('total', whereClause);
+    const product_sales = await productoutmodel.findAndCountAll(whereClause);
+    const cost = await await productoutmodel.findAll({
+      attributes: [
+        [Sequelize.literal('SUM(cost * qty)'), 'total'] // Ekspresi SQL untuk menghitung total cost
+      ],
+      where: {
+        createdAt: {
+          [Op.between]: [start, end]
+        }
+      }
+    })
+    const top_product = await productoutmodel.findAll({
+      attributes: ['product_name', [Sequelize.fn('SUM', Sequelize.col('qty')), 'total']],
+      group: ['product_name'],
+      order: [[Sequelize.literal('total'), 'DESC']],
+      limit: 10,
+      where: {
+        createdAt: {
+          [Op.between]: [start, end]
+        }
+      }
+    })
+    // ALL SALES
+    const all_sales = await transactionmodel.findAll({
+    });
+    // Top Sales
+    const top_sales = await productoutmodel.findAll({
+      attributes: ['product_name', [Sequelize.fn('SUM', Sequelize.col('total')), 'total']],
+      group: ['product_name'],
+      order: [[Sequelize.literal('total'), 'DESC']],
+      limit: 10,
+      where: {
+        createdAt: {
+          [Op.between]: [start, end]
+        }
+      }
+    }).then(response => {
+      const total_penjualan = sales;
+      const addKontribusi = response.map(item => {
+        const kontribusi = Math.round((item.total / total_penjualan) * 100);
+        return { ...item.dataValues, kontribusi: kontribusi };
+      });
+      return addKontribusi
+    })
+    const data = {
+      total_sales: sales || 0,
+      total_transaction: transaction.count || 0,
+      total_product_sales: product_sales.count,
+      total_cost: cost || 0,
+      top_product: top_product || [],
+      all_sales: all_sales,
+      top_sales: top_sales || [],
+
+    }
+    return res.json(responseFormatter.success(data))
+  },
+  getStat: async (req, res) => {
+    const yearToSearch = req.query.year;
+    const comparePerYear = await productoutmodel.findAll({
+      attributes: [
+        [Sequelize.literal('EXTRACT(MONTH FROM "createdAt")'), 'month'], // Extract month from createdAt column
+        [Sequelize.literal('SUM(cost * qty)'), 'total_cost'], // Calculate total cost
+        [Sequelize.literal('SUM(total)'), 'total_price'], // Calculate total price
+      ],
+      group: [Sequelize.literal('EXTRACT(MONTH FROM "createdAt")'), 'month'],
+      where: Sequelize.where(
+        Sequelize.fn('EXTRACT', Sequelize.literal('YEAR FROM "createdAt"')),
+        yearToSearch
+      ),
+    }).then(response => {
+      const margin = response.map(item => {
+        return {
+          bulan: item.dataValues.month,
+          total_cost: parseInt(item.dataValues.total_cost),
+          total_sale: parseInt(item.dataValues.total_price),
+          margin: item.dataValues.total_price - item.dataValues.total_cost
+        }
+      })
+      return margin
+    })
+    res.json(responseFormatter.success(comparePerYear))
   }
 }

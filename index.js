@@ -59,6 +59,7 @@ app.get('/api/v1/product/:barcode', product.getByBarcode);
 app.delete('/api/v1/product/:barcode', product.delete);
 app.post('/api/v1/product/', product.post);
 app.put('/api/v1/product/:barcode', product.update);
+app.get('/api/v1/product/stock/info', product.stock);
 
 // Category API
 const category = require('./api/categoryAPI')
@@ -102,7 +103,8 @@ app.post('/api/v1/users', user.create);
 app.delete('/api/v1/users/:id/delete', user.delete);
 app.put('/api/v1/users/:id/update', user.update);
 // AUTh
-const auth = require('./api/authAPI')
+const auth = require('./api/authAPI');
+const stockAPI = require('./api/stockAPI');
 app.post('/api/v1/login', auth.login);
 
 // const export = require('./api/export/excel');

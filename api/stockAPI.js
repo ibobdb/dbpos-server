@@ -1,4 +1,6 @@
 const { stockLogModel } = require('../models');
+const responseFormatter = require('../formatter/responseFormatter');
+
 module.exports = {
   getProductStockLog: async (req, res) => {
     const barcode = req.params.barcode;
@@ -15,5 +17,5 @@ module.exports = {
     } catch (err) {
       res.json(responseFormatter.error(err));
     }
-  }
+  },
 }

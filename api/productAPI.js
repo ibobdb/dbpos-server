@@ -1,6 +1,7 @@
 const { productModel, categoryModel, discountmodel, batchmodel } = require('../models/');
 const responseFormatter = require('../formatter/responseFormatter');
 const { Op } = require("sequelize");
+const Pagination = require('../utils/pagination');
 const { sync_stock } = require('../utils/syncStock');
 // const categorymodel = require('../models/categorymodel');
 module.exports = {
@@ -176,6 +177,41 @@ module.exports = {
       res.json(responseFormatter.success(response, 'Data berhasil diupdate'))
     } catch (error) {
       res.json(responseFormatter.error(error))
+    }
+  },
+  stock: async (req, res) => {
+    const { limit = 10, page = 1, search } = req.query;
+    const stock_limit_warning = 3;
+    try {
+      const offset = (page - 1) * limit;
+      const whereClause = {
+        [Op.and]: [
+          {
+            [Op.or]: [
+              {
+                product_name: {
+                  [Op.iLike]: `%${search}%`
+                }
+              },
+            ]
+          },
+
+        ]
+      };
+      const response = await productModel.findAndCountAll({
+        where: (search ? whereClause : {
+          stock: {
+            [Op.lte]: stock_limit_warning
+          }
+        }),
+        limit: parseInt(limit),
+        offset: offset,
+        distinct: true
+      });
+      const results = Pagination(limit, page, response)
+      res.json(responseFormatter.success(results))
+    } catch (error) {
+      res.status(500).json({ error: error });
     }
   }
 }

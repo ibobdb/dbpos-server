@@ -125,8 +125,39 @@ module.exports = {
       });
       return addKontribusi
     })
+    const yearToSearch = new Date().getFullYear() - 1;
+    const compare_year = await productoutmodel.findAll({
+      attributes: [
+        [Sequelize.literal('EXTRACT(YEAR FROM "createdAt")'), 'tahun'],
+        [Sequelize.literal('SUM(cost * qty)'), 'total_cost'],
+        [Sequelize.literal('SUM(total)'), 'total_price'],
+      ],
+      group: [Sequelize.literal('EXTRACT(YEAR FROM "createdAt")'), 'tahun'],
+      where: Sequelize.where(
+        Sequelize.fn('EXTRACT', Sequelize.literal('YEAR FROM "createdAt"')),
+        {
+          [Op.gte]: yearToSearch
+        }
+      ),
+      order: [
+        [Sequelize.literal('EXTRACT(YEAR FROM "createdAt")'), 'ASC']
+      ]
+    }).then(response => {
+      const margin = response.map(item => {
+        return {
+          tahun: item.dataValues.tahun,
+          total_cost: parseInt(item.dataValues.total_cost),
+          total_sale: parseInt(item.dataValues.total_price),
+          margin: item.dataValues.total_price - item.dataValues.total_cost
+        }
+      })
+      return margin
+    })
+
+
     const data = {
       total_sales: sales || 0,
+      compare_year: compare_year,
       total_transaction: transaction.count || 0,
       total_product_sales: product_sales.count,
       total_cost: cost || 0,

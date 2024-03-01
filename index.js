@@ -60,6 +60,7 @@ app.delete('/api/v1/product/:barcode', product.delete);
 app.post('/api/v1/product/', product.post);
 app.put('/api/v1/product/:barcode', product.update);
 app.get('/api/v1/product/stock/info', product.stock);
+app.get('/api/v1/product/export/excel', product.export_to_excel)
 
 // Category API
 const category = require('./api/categoryAPI')
@@ -88,12 +89,12 @@ app.put('/api/v1/discount/change_status/:id', discount.set_off_discount);
 const batch = require('./api/batchAPI');
 batch.check_bath_expire();
 app.get('/api/v1/batch', batch.get);
+app.get('/api/v1/batch/export/excel', batch.export_to_excel);
 app.get('/api/v1/batch/:batch_code/:barcode', batch.getById);
 app.post('/api/v1/batch', batch.create);
 app.put('/api/v1/batch', batch.update);
 app.delete('/api/v1/batch/:batch_code/:barcode', batch.delete);
 app.put('/api/v1/batch/:batch_code/:barcode', batch.adjust_batch_stock);
-app.get('/api/v1/batch/export/excel', batch.export_to_excel);
 
 // User
 const user = require('./api/userAPI');

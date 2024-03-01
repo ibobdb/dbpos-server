@@ -4,6 +4,7 @@ const { Op } = require("sequelize");
 const Pagination = require('../utils/pagination');
 const { sync_stock } = require('../utils/syncStock');
 // const categorymodel = require('../models/categorymodel');
+const { createExcelFile } = require('../utils/export/excel')
 module.exports = {
   getAll: async (req, res, next) => {
     // params (search, by id, by name)sort,
@@ -63,6 +64,7 @@ module.exports = {
             as: 'discount',
           },
         ],
+        order: [['product_name', 'ASC']]
 
       });
       response.rows.map(row => {
@@ -212,6 +214,49 @@ module.exports = {
       res.json(responseFormatter.success(results))
     } catch (error) {
       res.status(500).json({ error: error });
+    }
+  },
+  export_to_excel: async (req, res) => {
+
+    const getProduk = await productModel.findAll({
+      include: [
+        {
+          model: categoryModel,
+          as: 'category'
+        }
+      ]
+    });
+
+    const data =
+    {
+      rowHead: [
+        { header: 'Barcode', key: 'barcode', width: 20 },
+        { header: 'Produk', key: 'product_name', width: 30 },
+        { header: 'Sisa Stok', key: 'stock', width: 20 },
+        { header: 'kategori', key: 'category', width: 20 },
+      ],
+      rowValue: [
+      ]
+    }
+
+    await getProduk.forEach((produk) => {
+      data.rowValue.push({
+        barcode: produk.barcode,
+        product_name: produk.product_name,
+        stock: produk.stock,
+        category: produk.category ? produk.category.name : 'Tidak ada kategori',
+      });
+    });
+    const workbook_name = `Produk Update (${new Date().toLocaleDateString('id-ID')})`;
+    try {
+      const workbook = await createExcelFile(data);
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename=${workbook_name}.xlsx`);
+      await workbook.xlsx.write(res);
+      res.end();
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ success: false, message: 'Terjadi kesalahan saat membuat file Excel.' });
     }
   }
 }

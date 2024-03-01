@@ -47,6 +47,7 @@ module.exports = {
           }
         ],
 
+
       });
       const results = Pagination(limit, page, response)
       res.json(responseFormatter.success(results))
@@ -167,6 +168,8 @@ module.exports = {
     }
   },
   export_to_excel: async (req, res) => {
+    const { kadaluarsa, aman, stoktidakkosong, stokkosong } = req.query;
+
     const getBatch = await batchmodel.findAll({
       include: [
         {
@@ -178,6 +181,7 @@ module.exports = {
         }
       ],
     });
+
     const data =
     {
       rowHead: [

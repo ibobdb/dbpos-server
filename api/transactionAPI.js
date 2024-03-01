@@ -83,36 +83,25 @@ module.exports = {
     }
   },
   export_to_excel: async (req, res) => {
-    const date = new Date();
-    const tahun = date.getFullYear();
-    const bulan = date.getMonth() + 1;
-    const tanggal = date.getDate();
-    const targetYear = req.query.tahun || 0; // Tahun yang diinginkan
-    const targetMonth = req.query.bulan || 0; // Bulan yang diinginkan
-    const targetDay = req.query.tanggal || 0; // Tanggal yang diinginkan
-    const fulldate = `${targetDay}/${targetMonth}/${targetYear}`;
+    const start = new Date(req.query.start);
+    const end = new Date(req.query.end);
+    end.setDate(end.getDate() + 1);
     try {
-      const whereCondition = {
-        createdAt: {
-          [Op.and]: [
-            targetYear != 0 && Sequelize.where(Sequelize.fn('YEAR', Sequelize.col('createdAt')), targetYear),
-            targetMonth != 0 && Sequelize.where(Sequelize.fn('MONTH', Sequelize.col('createdAt')), targetMonth),
-            targetDay != 0 && Sequelize.where(Sequelize.fn('DAY', Sequelize.col('createdAt')), targetDay),
-          ].filter(Boolean) // Filter nilai null (jika targetYear, targetMonth, atau targetDay adalah 0)
-        }
-      };
       const productout = await productoutmodel.findAll(
         {
-          where: whereCondition,
-          attributes: ['product_barcode', [Sequelize.fn('SUM', Sequelize.col('qty')), 'qty'], 'product_name', 'price', 'createdAt'],
-          group: ['product_barcode', 'createdAt', 'product_name', 'price'],
+          where: {
+            createdAt: {
+              [Op.between]: [start, end]
+            }
+          }
         }
       );
-
+      // return res.json(productout);
       const data =
       {
         rowHead: [
           { header: 'Tanggal Transaksi', key: 'createdAt', width: 20 },
+          { header: 'ID TRANSAKSI', key: 'transaction_id', width: 20 },
           { header: 'Barcode', key: 'product_barcode', width: 30 },
           { header: 'Produk', key: 'product_name', width: 30 },
           { header: 'Qty', key: 'qty', width: 20 },
@@ -122,18 +111,18 @@ module.exports = {
         rowValue: [
         ]
       }
-      productout.forEach((batch) => {
+      await productout.forEach((batch) => {
         data.rowValue.push({
-          createdAt: new Date(batch.createdAt).toLocaleDateString('id-ID'),
+          createdAt: batch.createdAt,
+          transaction_id: batch.transaction_id,
           product_barcode: batch.product_barcode,
           product_name: batch.product_name,
-          qty: batch.qty || 0,
+          qty: batch.qty,
           price: batch.price,
-          total: batch.qty * batch.price
+          total: batch.total
         });
       });
-
-      const workbook_name = `Transaksi ${fulldate}`;
+      const workbook_name = `Transaksi ${start}-${end}`;
       try {
         const workbook = await createExcelFile(data);
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

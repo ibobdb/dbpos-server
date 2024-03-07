@@ -110,6 +110,10 @@ app.post('/api/v1/login', auth.login);
 
 // const export = require('./api/export/excel');
 // Export
+// get Store
+const store = require('./api/storeAPI');
+app.get('/api/v1/store', store.getStore);
+app.put('/api/v1/store', store.updateStore);
 
 app.listen(PORT, () => {
   console.log(`Server dijalankan pada port:${PORT}`)

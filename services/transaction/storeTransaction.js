@@ -121,8 +121,8 @@ const store_transaction = async (product_list, transaction_data) => {
     const tax = data.tax;
     const subtotal = create_product_out
     const total = (subtotal - (subtotal * discount / 100) + (subtotal * tax / 100));
-    data.sub_total = subtotal;
-    data.total = total;
+    data.sub_total = Math.round(subtotal);
+    data.total = Math.round(total);
     const create_transaction = await transactionmodel.create(data);
     if (create_transaction) {
       return create_transaction;
